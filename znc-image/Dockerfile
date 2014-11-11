@@ -2,18 +2,14 @@ FROM phusion/baseimage:0.9.15
 MAINTAINER Kenny Do <kedo@ocf.berkeley.edu>
 EXPOSE 6697
 
+# Disable the SSH server installed by phusion by default
+RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
+
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y build-essential git libcurl4-openssl-dev
 
-RUN useradd -m znc-user
-RUN mkdir /home/znc-user/.znc && \
-    mkdir /home/znc-user/.znc/configs && \
-    mkdir /home/znc-user/.znc/modules && \
-    chown znc-user:znc-user -R /home/znc-user/.znc
-
-# Disable the SSH server installed by phusion by default
-RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
+RUN useradd --uid 1001 -m znc-user
 
 # Download and install znc
 RUN cd $HOME && \
@@ -29,17 +25,11 @@ RUN cd $HOME/znc-1.4 && \
 RUN cd $HOME && \
     git clone https://github.com/jreese/znc-push.git && \
     cd $HOME/znc-push && \
-    znc-buildmod push.cpp && \
-    find ~znc-user && \
-    cp push.so ~znc-user/.znc/modules/push.so && \
-    chown znc-user:znc-user /home/znc-user/.znc/modules/push.so
+    znc-buildmod push.cpp
 
 # Create the runit service for znc
 RUN mkdir /etc/service/znc
 ADD znc.sh /etc/service/znc/run
-
-ADD znc.conf /home/znc-user/.znc/configs/znc.conf
-RUN chown znc-user:znc-user /home/znc-user/.znc/configs/znc.conf
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
