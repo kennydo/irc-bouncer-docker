@@ -19,6 +19,9 @@ start: start-znc-image
 backup-config: $(BACKUPS_DIR)
 	docker run -i --volumes-from znc-data -v $(BACKUPS_DIR):/backup busybox sh -c 'cp /home/znc-user/.znc/configs/znc.conf /backup/znc.$(CURRENT_DATE).conf'
 
+backup-data: $(BACKUPS_DIR)
+	docker run -i --volumes-from znc-data -v $(BACKUPS_DIR):/backup busybox sh -c 'tar cvf - -C /home/znc-user/.znc users | gzip -9 > /backup/znc_data_$(CURRENT_DATE).tar.gz'
+
 # Create the backup dir if it doesn't exist, since it's required by backup-config and backup-data
 $(BACKUPS_DIR):
 	mkdir $(BACKUPS_DIR)
