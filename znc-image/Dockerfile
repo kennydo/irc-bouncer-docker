@@ -27,6 +27,10 @@ RUN cd $HOME && \
     cd $HOME/znc-push && \
     znc-buildmod push.cpp
 
+RUN mkdir -p /opt/znc/modules && \
+    cp $HOME/znc-push/push.so /opt/znc/modules/push.so && \
+    chmod a+r /opt/znc/modules/push.so
+
 # Create the runit service for znc
 RUN mkdir /etc/service/znc
 ADD znc.sh /etc/service/znc/run

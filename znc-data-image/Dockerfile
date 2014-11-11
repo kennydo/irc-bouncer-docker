@@ -13,7 +13,7 @@ RUN mkdir /home/znc-user/.znc && \
 ADD znc.conf /home/znc-user/.znc/configs/znc.conf
 
 # Symlink the push.so compiled from znc-image
-RUN ln -s /root/znc-push/push.so /home/znc-user/.znc/modules/push.so
+RUN ln -s /opt/znc/modules/push.so /home/znc-user/.znc/modules/push.so
 
 RUN chown znc-user:znc-user -R /home/znc-user/.znc
 
