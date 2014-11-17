@@ -62,3 +62,6 @@ start-znc-image: start-znc-data-image
 
 stop:
 	docker stop znc-data znc
+
+shell: start-znc-data-image
+	docker run --rm -i -t --volumes-from znc-data kennydo/znc /bin/bash
