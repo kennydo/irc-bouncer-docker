@@ -10,6 +10,7 @@ BACKUPS_DIR = $(shell pwd)/backups
 
 ##############################################################################
 
+SHELL = /bin/bash
 CURRENT_DATE = $(shell date +"%Y-%m-%d")
 USER_ID = $(shell id -u)
 GROUP_ID = $(shell id -g)
@@ -40,7 +41,24 @@ build-%-image: %-image
 	docker build --rm -t kennydo/$(<:-image=) ./$<
 
 start-znc-data-image:
-	docker run -d --name znc-data kennydo/znc-data
+	if [[ $$(docker ps -a | grep -E '\bznc-data\s*$$' | wc -l) = "1" ]]; \
+	then \
+		echo "Starting existing znc-data container"; \
+		docker start znc-data; \
+	else \
+		echo "Starting new znc-data container"; \
+		docker run -d --name znc-data kennydo/znc-data; \
+	fi
 
 start-znc-image: start-znc-data-image
-	docker run -d -p 0.0.0.0:$(HOST_IRC_PORT):$(CONTAINER_IRC_PORT) --volumes-from znc-data --name znc kennydo/znc
+	if [[ $$(docker ps -a | grep -E '\bznc\s*$$' | wc -l) = "1" ]]; \
+	then \
+		echo "Starting existing znc container"; \
+		docker start znc; \
+	else \
+		echo "Starting new znc container"; \
+		docker run -d -p 0.0.0.0:$(HOST_IRC_PORT):$(CONTAINER_IRC_PORT) --volumes-from znc-data --name znc kennydo/znc; \
+	fi
+
+stop:
+	docker stop znc-data znc
