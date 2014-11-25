@@ -11,6 +11,7 @@ RUN mkdir /home/znc-user/.znc && \
 
 # Add the znc.conf from the local directory
 ADD znc.conf /home/znc-user/.znc/configs/znc.conf
+ADD znc.pem /home/znc-user/.znc/znc.pem
 
 # Symlink the push.so compiled from znc-image
 RUN ln -s /opt/znc/modules/push.so /home/znc-user/.znc/modules/push.so
