@@ -1,16 +1,24 @@
-irc-bouncer-docker
+IRC Bouncer Docker
 ==================
 
-My IRC bouncer setup consists of two Docker images: kennydo/znc and kennydo/znc-data.
+My IRC bouncer setup consists of a single Docker image: znc-image.
 
-The znc-data image is a `data volume container <https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container>`_ that holds the ``.znc`` directory.
+This image looks in the ``ZNC_DATA_DIR`` specified in the ``Makefile`` for the data directory (the directory that contains the ``configs``, ``modules``, ``moddata``, and ``modules`` directories).
 
 Installation
 ============
 
-#. Copy your ``znc.pem`` and your ``znc.conf`` files into the `znc-data-image` directory.
-#. Run ``make build`` to build the Docker images.
-#. Run ``make start`` to start the images.
+1. Create the following directories under the ``ZNC_DATA_DIR`` (which is ``/var/znc`` by default):
+  
+  - configs
+  - moddata
+  - modules
+  - users
+
+2. Copy your ``znc.conf`` into ``$ZNC_DATA_DIR/configs``.
+3. Copy your ``znc.pem`` to the location you specified in your ``znc.conf``.
+4. Run ``make build`` to build the Docker images.
+5. Run ``make start`` to start the images.
 
 Backups
 =======
