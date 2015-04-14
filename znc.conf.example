@@ -14,7 +14,7 @@ HideVersion = false
 LoadModule = webadmin
 MaxBufferSize = 500
 ProtectWebSessions = true
-SSLCertFile = /var/znc/znc.pem
+SSLCertFile = /znc/znc.pem
 ServerThrottle = 30
 Version = 1.6.0
 
