@@ -4,6 +4,9 @@ HOST_IRC_PORT = 3900
 # The port of the ZNC running inside the container
 CONTAINER_IRC_PORT = 6697
 
+# The directory that will hold the ZNC data directory
+ZNC_DATA_DIR = /var/znc
+
 # Where we plan to store backup data
 BACKUPS_DIR = $(shell pwd)/backups
 
@@ -15,7 +18,7 @@ CURRENT_DATE = $(shell date +"%Y-%m-%d")
 USER_ID = $(shell id -u)
 GROUP_ID = $(shell id -g)
 
-build: build-znc-data-image build-znc-image
+build: build-znc-image
 
 start: start-znc-image
 
@@ -40,28 +43,18 @@ $(BACKUPS_DIR):
 build-%-image: %-image
 	docker build --rm -t kennydo/$(<:-image=) ./$<
 
-start-znc-data-image:
-	if [[ $$(docker ps -a | grep -E '\bznc-data\s*$$' | wc -l) = "1" ]]; \
-	then \
-		echo "Starting existing znc-data container"; \
-		docker start znc-data; \
-	else \
-		echo "Starting new znc-data container"; \
-		docker run -d --name znc-data kennydo/znc-data; \
-	fi
-
-start-znc-image: start-znc-data-image
+start-znc-image:
 	if [[ $$(docker ps -a | grep -E '\bznc\s*$$' | wc -l) = "1" ]]; \
 	then \
 		echo "Starting existing znc container"; \
 		docker start znc; \
 	else \
 		echo "Starting new znc container"; \
-		docker run -d -p 0.0.0.0:$(HOST_IRC_PORT):$(CONTAINER_IRC_PORT) --volumes-from znc-data --name znc kennydo/znc; \
+		docker run -d -p 0.0.0.0:$(HOST_IRC_PORT):$(CONTAINER_IRC_PORT) -v $(ZNC_DATA_DIR):/var/znc --name znc kennydo/znc; \
 	fi
 
 stop:
-	docker stop znc-data znc
+	docker stop znc
 
-shell: start-znc-data-image
-	docker run --rm -i -t --volumes-from znc-data kennydo/znc /bin/bash
+shell:
+	docker run --rm -i -t -v $(ZNC_DATA_DIR):/var/znc  kennydo/znc /bin/bash

@@ -1,35 +1,31 @@
-FROM phusion/baseimage:0.9.15
+FROM phusion/baseimage:0.9.16
 MAINTAINER Kenny Do <chinesedewey@gmail.com>
 EXPOSE 6697
-
-# Disable the SSH server installed by phusion by default
-RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y build-essential git libcurl4-openssl-dev
 
-RUN useradd --uid 1001 -m znc-user
+RUN useradd --uid 1000 -m znc-user
 
 # Download and install znc
-RUN cd $HOME && \
-    curl -o znc.tar.gz http://znc.in/releases/znc-1.4.tar.gz && \
+RUN cd /tmp && \
+    curl -o znc.tar.gz http://znc.in/releases/znc-1.6.0.tar.gz && \
     tar -zxf znc.tar.gz
 
-RUN cd $HOME/znc-1.4 && \
+RUN cd /tmp/znc-1.6.0 && \
     ./configure && \
     make && \
     make install
 
 # Download and install the znc-push module
-RUN cd $HOME && \
-    git clone https://github.com/jreese/znc-push.git && \
-    cd $HOME/znc-push && \
+RUN cd /tmp && \
+    git clone --depth 1 https://github.com/jreese/znc-push.git && \
+    cd /tmp/znc-push && \
     znc-buildmod push.cpp
 
-RUN mkdir -p /opt/znc/modules && \
-    cp $HOME/znc-push/push.so /opt/znc/modules/push.so && \
-    chmod a+r /opt/znc/modules/push.so
+# Copy the compiled push.so to a directory where ZNC looks for modules
+RUN cp /tmp/znc-push/push.so /usr/local/lib/znc
 
 # Create the runit service for znc
 RUN mkdir /etc/service/znc
