@@ -10,7 +10,6 @@ ZNC_DATA_DIR = /var/znc
 # Where we plan to store backup data
 BACKUPS_DIR = $(shell pwd)/backups
 
-
 ##############################################################################
 
 SHELL = /bin/bash
@@ -44,11 +43,11 @@ start-znc-image:
 		docker start znc; \
 	else \
 		echo "Starting new znc container"; \
-		docker run -d -p 0.0.0.0:$(HOST_IRC_PORT):$(CONTAINER_IRC_PORT) -v $(ZNC_DATA_DIR):/var/znc --name znc kennydo/znc; \
+		docker run -d -p 0.0.0.0:$(HOST_IRC_PORT):$(CONTAINER_IRC_PORT) -v $(ZNC_DATA_DIR):/znc --name znc kennydo/znc; \
 	fi
 
 stop:
 	docker stop znc
 
 shell:
-	docker run --rm -i -t -v $(ZNC_DATA_DIR):/var/znc  kennydo/znc /bin/bash
+	docker run --rm -i -t -v $(ZNC_DATA_DIR):/znc  kennydo/znc /bin/bash
