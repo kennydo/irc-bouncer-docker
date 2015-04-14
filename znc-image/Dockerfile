@@ -1,5 +1,5 @@
 FROM phusion/baseimage:0.9.15
-MAINTAINER Kenny Do <kedo@ocf.berkeley.edu>
+MAINTAINER Kenny Do <chinesedewey@gmail.com>
 EXPOSE 6697
 
 # Disable the SSH server installed by phusion by default

@@ -1,5 +1,5 @@
 FROM busybox:buildroot-2014.02
-MAINTAINER Kenny Do <kedo@ocf.berkeley.edu>
+MAINTAINER Kenny Do <chinesedewey@gmail.com>
 
 # Add a new user without prompting for password
 RUN adduser -u 1001 -D znc-user
